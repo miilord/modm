@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	testURI  = "mongodb://root:123456@127.0.0.1:27017/test?authSource=admin&directConnection=true"
-	testDB   = "test_db"
+	testURI  = "mongodb://localhost:27017/test?readPreference=primary&directConnection=true&ssl=false"
+	testDB   = "test"
 	testColl = "test"
 )
 
