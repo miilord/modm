@@ -19,9 +19,6 @@ jobs:
         with:
           mongodb-version: 5.0
           mongodb-replica-set: test-rs
-          mongodb-username: root
-          mongodb-password: 123456
-          mongodb-db: test
     
       - name: Setup Go ${{ matrix.go-version }}
         uses: actions/setup-go@v4
