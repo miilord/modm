@@ -1,6 +1,6 @@
 module github.com/miilord/modm
 
-go 1.21.3
+go 1.18
 
 require go.mongodb.org/mongo-driver v1.12.1
 
