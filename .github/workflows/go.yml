@@ -14,6 +14,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.10.0
+        with:
+          mongodb-version: 5.0
+          mongodb-replica-set: test-rs
+    
       - name: Setup Go ${{ matrix.go-version }}
         uses: actions/setup-go@v4
         with:
