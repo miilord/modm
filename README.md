@@ -1,20 +1,24 @@
 # MODM
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/miilord/modm)](https://goreportcard.com/report/github.com/miilord/modm)
+[![Go](https://github.com/miilord/modm/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/miilord/modm/actions/workflows/go.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/miilord/modm.svg)](https://pkg.go.dev/github.com/miilord/modm)
+[![GitHub](https://img.shields.io/github/license/miilord/modm)](https://github.com/miilord/modm/blob/main/LICENSE)
+[![Coverage Status](https://coveralls.io/repos/github/miilord/modm/badge.svg?branch=main)](https://coveralls.io/github/miilord/modm?branch=main)
+
 MODM is a MongoDB wrapper built on top of the mongo-go-driver, leveraging the powerful features of Go generics. It provides a convenient interface for CRUD operations, allowing direct return of structured data without the need for code generation.
 
 ## Features
 
 - **Structured Data for CRUD Operations:** Directly return structured data from CRUD operations, providing a seamless development experience.
 
-- **No Code Generation Required:** MODM eliminates the need for code generation, making development more straightforward.
+- **No Code Generation Required:** Leverage Go 1.18's generics features to minimize code volume and enhance development efficiency.
 
-- **Flexible Hooks:** MODM supports flexible hooks for insert, find, and update operations, enabling developers to add custom logic easily.
+- **Flexible Hooks:** Support automated field updates, providing a more adaptable approach to data handling.
 
-- **Automatic Field Handling:** MODM handles fields automatically, reducing the need for manual intervention in the data structure.
+- **Easy-to-Use Index Management:** Effortlessly create MongoDB indexes through code for streamlined management.
 
-- **Synchronized Index Management:** Ensure your MongoDB indexes stay in sync with your Go code, making it easier to manage your data.
-
-- **User-Friendly Transactions:** MODM simplifies the use of transactions, making it easy for developers to work with MongoDB transactions seamlessly.
+- **Simple Transactions:** Simplify transaction usage, empowering developers to effortlessly employ MongoDB transactions.
 
 ## Requirements
 
