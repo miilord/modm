@@ -156,6 +156,15 @@ func TestRepo_Distinct(t *testing.T) {
 		t.Errorf("Expected no error, but got an error: %v", err)
 	}
 	assert.ElementsMatch(t, []interface{}{"go", "goo"}, values)
+
+	values2, err := repo.Distinct(ctx, "name", &TestUser{Age: 2})
+	if len(values2) == 0 {
+		t.Errorf("Expected non-empty distinct values, but got an empty slice")
+	}
+	if err != nil {
+		t.Errorf("Expected no error, but got an error: %v", err)
+	}
+	assert.ElementsMatch(t, []interface{}{"go"}, values2)
 }
 
 func TestRepo_Aggregate(t *testing.T) {

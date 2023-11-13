@@ -17,19 +17,6 @@ func TestGetPointer(t *testing.T) {
 	assert.Equal(t, value, *ptr)
 }
 
-func TestDeepCopy(t *testing.T) {
-	type User struct {
-		Name string
-		Age  int
-	}
-	src := User{
-		Name: "John",
-		Age:  30,
-	}
-	dest := DeepCopy[User](src)
-	assert.Equal(t, src, dest)
-}
-
 func TestStructToBSOND(t *testing.T) {
 	// Test struct to bson.D conversion
 	src := struct {
@@ -106,4 +93,30 @@ func TestIndexesToModel(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, bs, ebs)
 	}
+}
+
+func TestSplitSortField(t *testing.T) {
+	t.Run("Empty Field", func(t *testing.T) {
+		key, sort := SplitSortField("")
+		assert.Equal(t, "", key)
+		assert.Equal(t, int32(1), sort)
+	})
+
+	t.Run("Sort Ascending", func(t *testing.T) {
+		key, sort := SplitSortField("+fieldName")
+		assert.Equal(t, "fieldName", key)
+		assert.Equal(t, int32(1), sort)
+	})
+
+	t.Run("Sort Descending", func(t *testing.T) {
+		key, sort := SplitSortField("-fieldName")
+		assert.Equal(t, "fieldName", key)
+		assert.Equal(t, int32(-1), sort)
+	})
+
+	t.Run("Invalid Sort Symbol", func(t *testing.T) {
+		key, sort := SplitSortField("*fieldName")
+		assert.Equal(t, "*fieldName", key)
+		assert.Equal(t, int32(1), sort)
+	})
 }

@@ -1,7 +1,6 @@
 package modm
 
 import (
-	"encoding/json"
 	"strings"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,22 +12,6 @@ import (
 // GetPointer returns a pointer to the given value.
 func GetPointer[T any](value T) *T {
 	return &value
-}
-
-// DeepCopy creates a deep copy of the source document using JSON encoding and decoding.
-func DeepCopy[T comparable](src T) T {
-	srcJSON, err := json.Marshal(src)
-	if err != nil {
-		return *new(T)
-	}
-
-	var dest T
-	err = json.Unmarshal(srcJSON, &dest)
-	if err != nil {
-		return *new(T)
-	}
-
-	return dest
 }
 
 // StructToBSOND converts structure variables to bson.D.
