@@ -26,10 +26,11 @@ jobs:
       - name: Install dependencies
         run: go get .
       - name: Test with Go
-        run: go test
+        run: go test -v -coverprofile=coverage.out ./...
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@v2
         with:
+          file: coverage.out
           flag-name: Go-${{ matrix.go-version }}
           parallel: true
 
