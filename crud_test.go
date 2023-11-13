@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func TestRepo_InsertOne(t *testing.T) {
@@ -93,12 +94,14 @@ func TestRepo_DeleteMany(t *testing.T) {
 	require.NoError(t, err)
 
 	// Call the DeleteMany function
-	filter := bson.M{"age": bson.M{"$gte": 2}}
+	filter := bson.M{"age": bson.M{"$gte": 6}}
 	deletedCount, err := repo.DeleteMany(ctx, filter)
 	require.NoError(t, err)
+	require.Equal(t, int64(1), deletedCount)
 
-	// Validate that multiple documents were deleted
-	require.Equal(t, int64(2), deletedCount)
+	deletedCount, err = repo.DeleteMany(ctx, &TestUser{Age: 2})
+	require.NoError(t, err)
+	require.Equal(t, int64(1), deletedCount)
 
 	var count int64
 	count, err = db.Collection(testColl).CountDocuments(ctx, bson.M{})
@@ -148,8 +151,6 @@ func TestRepo_UpdateOne(t *testing.T) {
 	update := &TestUser{Age: 3}
 	modifiedCount, err := repo.UpdateOne(ctx, filter, update)
 	require.NoError(t, err)
-
-	// Validate that one document was modified
 	require.Equal(t, int64(1), modifiedCount)
 
 	var doc TestUser
@@ -158,6 +159,17 @@ func TestRepo_UpdateOne(t *testing.T) {
 	require.NotEqual(t, doc.UpdatedAt, doc.CreatedAt)
 	require.Equal(t, "go", doc.Name)
 	require.Equal(t, uint(3), doc.Age)
+
+	modifiedCount2, err := repo.UpdateOne(ctx, bson.M{"age": 3}, bson.M{"$set": bson.M{"age": 2}})
+	require.NoError(t, err)
+	require.Equal(t, int64(1), modifiedCount2)
+
+	var doc2 TestUser
+	err = db.Collection(testColl).FindOne(ctx, bson.M{"age": 2}).Decode(&doc2)
+	require.NoError(t, err)
+	require.NotEqual(t, doc2.UpdatedAt, doc2.CreatedAt)
+	require.Equal(t, "go", doc2.Name)
+	require.Equal(t, uint(2), doc2.Age)
 }
 
 func TestRepo_UpdateMany(t *testing.T) {
@@ -178,8 +190,6 @@ func TestRepo_UpdateMany(t *testing.T) {
 	update := &TestUser{Age: 3}
 	modifiedCount, err := repo.UpdateMany(ctx, filter, update)
 	require.NoError(t, err)
-
-	// Validate that multiple documents were modified
 	require.Equal(t, int64(2), modifiedCount)
 
 	var doc TestUser
@@ -187,6 +197,10 @@ func TestRepo_UpdateMany(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEqual(t, doc.UpdatedAt, doc.CreatedAt)
 	require.NotZero(t, doc.Name)
+
+	modifiedCount2, err := repo.UpdateMany(ctx, &TestUser{Age: 3}, bson.M{"$set": bson.M{"age": 2}})
+	require.NoError(t, err)
+	require.Equal(t, int64(2), modifiedCount2)
 }
 
 func TestRepo_Find(t *testing.T) {
@@ -207,12 +221,25 @@ func TestRepo_Find(t *testing.T) {
 	filter := bson.M{"age": bson.M{"$gte": 0}}
 	docs, err := repo.Find(ctx, filter)
 	require.NoError(t, err)
-
-	// Validate that multiple documents were retrieved
 	require.Equal(t, 2, len(docs))
 
-	result, err := repo.Find(ctx, bson.M{"name": "BUG"})
+	result, err := repo.Find(ctx, &TestUser{Name: "BUG"})
 	require.NoError(t, err)
+	require.Zero(t, len(result))
+	require.NotNil(t, result)
+	require.Equal(t, []*TestUser{}, result)
+
+	// test option error
+	result, err = repo.Find(ctx, bson.M{}, options.Find().SetSort("Error"))
+	require.Error(t, err)
+	require.Zero(t, len(result))
+	require.NotNil(t, result)
+	require.Equal(t, []*TestUser{}, result)
+
+	// test decode error
+	repo.UpdateOne(ctx, bson.M{}, bson.M{"$set": bson.M{"age": "age"}})
+	result, err = repo.Find(ctx, bson.M{})
+	require.Error(t, err)
 	require.Zero(t, len(result))
 	require.NotNil(t, result)
 	require.Equal(t, []*TestUser{}, result)
