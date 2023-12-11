@@ -24,6 +24,46 @@ MODM is a MongoDB wrapper built on top of the mongo-go-driver, leveraging the po
 
 - **Go 1.18 and Above:** MODM is designed to take full advantage of the features introduced in Go 1.18 and later versions.
 
+## Comparison with mongo-go-driver
+
+When using mongodb, the typical approach is to define models and collections as follows:
+
+```go
+type User struct {
+	DefaultField `bson:",inline"`
+	Name         string `bson:"name,omitempty" json:"name"`
+	Age          int    `bson:"age,omitempty" json:"age"`
+}
+```
+
+Subsequently, the query is executed using mongo-go-driver:
+
+```go
+coll := db.Collection("users")
+users := make([]*User, 0)
+cursor, err := coll.Find(context.TODO(), bson.D{})
+if err != nil {
+	log.Fatal(err)
+}
+if err = cursor.All(context.TODO(), &users); err != nil {
+	log.Fatal(err)
+}
+```
+
+In contrast, using modm can greatly simplify the process:
+
+```go
+coll := NewRepo[*User](db.Collection("users"))
+users, err := coll.Find(context.TODO(), bson.D{})
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+Here, `Find()` returns `[]*User, error`.
+
+Performance tests show that the efficiency of the two methods is comparable.
+
 ## Installation
 
 ```bash
