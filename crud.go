@@ -34,18 +34,12 @@ func (r *Repo[T]) InsertMany(ctx context.Context, docs []T, opts ...*options.Ins
 
 // DeleteOne deletes a single document based on the provided filter.
 func (r *Repo[T]) DeleteOne(ctx context.Context, filter interface{}, opts ...*options.DeleteOptions) (deletedCount int64, err error) {
-	if f, ok := filter.(T); ok {
-		filter, _ = StructToBSOND(f)
-	}
 	res, err := r.collection.DeleteOne(ctx, filter, opts...)
 	return res.DeletedCount, err
 }
 
 // DeleteMany deletes multiple documents based on the provided filter.
 func (r *Repo[T]) DeleteMany(ctx context.Context, filter interface{}, opts ...*options.DeleteOptions) (deletedCount int64, err error) {
-	if f, ok := filter.(T); ok {
-		filter, _ = StructToBSOND(f)
-	}
 	res, err := r.collection.DeleteMany(ctx, filter, opts...)
 	return res.DeletedCount, err
 }
@@ -59,9 +53,6 @@ func (r *Repo[T]) UpdateByID(ctx context.Context, id interface{}, updateOrDoc in
 // UpdateOne updates a single document based on the provided filter and update/document.
 // Hooks(document): BeforeUpdate, AfterUpdate
 func (r *Repo[T]) UpdateOne(ctx context.Context, filter interface{}, updateOrDoc interface{}, opts ...*options.UpdateOptions) (modifiedCount int64, err error) {
-	if f, ok := filter.(T); ok {
-		filter, _ = StructToBSOND(f)
-	}
 	if doc, ok := updateOrDoc.(T); ok {
 		doc.BeforeUpdate(ctx)
 		defer doc.AfterUpdate(ctx)
@@ -75,9 +66,6 @@ func (r *Repo[T]) UpdateOne(ctx context.Context, filter interface{}, updateOrDoc
 // UpdateMany updates multiple documents based on the provided filter and update/document.
 // Hooks(document): BeforeUpdate, AfterUpdate
 func (r *Repo[T]) UpdateMany(ctx context.Context, filter interface{}, updateOrDoc interface{}, opts ...*options.UpdateOptions) (modifiedCount int64, err error) {
-	if f, ok := filter.(T); ok {
-		filter, _ = StructToBSOND(f)
-	}
 	if doc, ok := updateOrDoc.(T); ok {
 		doc.BeforeUpdate(ctx)
 		defer doc.AfterUpdate(ctx)
@@ -92,10 +80,6 @@ func (r *Repo[T]) UpdateMany(ctx context.Context, filter interface{}, updateOrDo
 // Hooks: AfterFind
 func (r *Repo[T]) Find(ctx context.Context, filter interface{}, opts ...*options.FindOptions) (docs []T, err error) {
 	docs = make([]T, 0)
-
-	if f, ok := filter.(T); ok {
-		filter, _ = StructToBSOND(f)
-	}
 	cursor, err := r.collection.Find(ctx, filter, opts...)
 	if err != nil {
 		return
@@ -115,9 +99,6 @@ func (r *Repo[T]) Find(ctx context.Context, filter interface{}, opts ...*options
 // FindOne retrieves a single document based on the provided filter.
 // Hooks: AfterFind
 func (r *Repo[T]) FindOne(ctx context.Context, filter interface{}, opts ...*options.FindOneOptions) (doc T, err error) {
-	if f, ok := filter.(T); ok {
-		filter, _ = StructToBSOND(f)
-	}
 	err = r.collection.FindOne(ctx, filter, opts...).Decode(&doc)
 	if err == nil {
 		doc.AfterFind(ctx)
@@ -128,9 +109,6 @@ func (r *Repo[T]) FindOne(ctx context.Context, filter interface{}, opts ...*opti
 // FindOneAndDelete retrieves and deletes a single document based on the provided filter.
 // Hooks: AfterFind
 func (r *Repo[T]) FindOneAndDelete(ctx context.Context, filter interface{}, opts ...*options.FindOneAndDeleteOptions) (doc T, err error) {
-	if f, ok := filter.(T); ok {
-		filter, _ = StructToBSOND(f)
-	}
 	err = r.collection.FindOneAndDelete(ctx, filter, opts...).Decode(&doc)
 	doc.AfterFind(ctx)
 	return
@@ -139,9 +117,6 @@ func (r *Repo[T]) FindOneAndDelete(ctx context.Context, filter interface{}, opts
 // FindOneAndUpdate retrieves, updates, and returns a single document based on the provided filter and update/document.
 // Hooks: BeforeUpdate(document), AfterUpdate(document), AfterFind
 func (r *Repo[T]) FindOneAndUpdate(ctx context.Context, filter interface{}, updateOrDoc interface{}, opts ...*options.FindOneAndUpdateOptions) (T, error) {
-	if f, ok := filter.(T); ok {
-		filter, _ = StructToBSOND(f)
-	}
 	opts = append(opts, options.FindOneAndUpdate().SetReturnDocument(options.After))
 	if doc, ok := updateOrDoc.(T); ok {
 		doc.BeforeUpdate(ctx)

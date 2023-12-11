@@ -26,9 +26,6 @@ func (r *Repo[T]) Name() string {
 // The filter parameter must be a document and can be used to select which documents contribute to the count. It cannot be nil. An empty document (e.g. bson.D{}) should be used to count all documents in the collection. This will result in a full collection scan.
 // The opts parameter can be used to specify options for the operation (see the options.CountOptions documentation).
 func (r *Repo[T]) CountDocuments(ctx context.Context, filter interface{}, opts ...*options.CountOptions) (int64, error) {
-	if f, ok := filter.(T); ok {
-		filter, _ = StructToBSOND(f)
-	}
 	return r.collection.CountDocuments(ctx, filter, opts...)
 }
 
@@ -45,9 +42,6 @@ func (r *Repo[T]) EstimatedDocumentCount(ctx context.Context, opts ...*options.E
 // The opts parameter can be used to specify options for the operation (see the options.DistinctOptions documentation).
 // For more information about the command, see https://www.mongodb.com/docs/manual/reference/command/distinct/.
 func (r *Repo[T]) Distinct(ctx context.Context, fieldName string, filter interface{}, opts ...*options.DistinctOptions) ([]interface{}, error) {
-	if f, ok := filter.(T); ok {
-		filter, _ = StructToBSOND(f)
-	}
 	return r.collection.Distinct(ctx, fieldName, filter, opts...)
 }
 

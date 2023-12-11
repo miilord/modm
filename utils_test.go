@@ -17,37 +17,6 @@ func TestGetPointer(t *testing.T) {
 	assert.Equal(t, value, *ptr)
 }
 
-func TestStructToBSOND(t *testing.T) {
-	// Test struct to bson.D conversion
-	src := struct {
-		Key   string `bson:"key"`
-		Value int    `bson:"value"`
-	}{
-		Key:   "A",
-		Value: 123,
-	}
-	doc, err := StructToBSOND(src)
-	assert.Nil(t, err)
-	assert.NotNil(t, doc)
-
-	// Verify the field names are taken from BSON tags
-	assert.Len(t, doc, 2)
-	assert.Equal(t, doc[0].Key, "key")
-	assert.Equal(t, doc[1].Key, "value")
-
-	// Test struct with empty fields
-	srcEmpty := struct {
-	}{}
-	docEmpty, errEmpty := StructToBSOND(srcEmpty)
-	assert.Nil(t, errEmpty)
-	assert.NotNil(t, docEmpty)
-
-	// Test unsupported type
-	unsupported := 42
-	_, errUnsupported := StructToBSOND(unsupported)
-	assert.NotNil(t, errUnsupported)
-}
-
 func TestIndexesToModel(t *testing.T) {
 	uniques := []string{"name", "uid"}
 	indexes := []string{"name,-age", "email"}

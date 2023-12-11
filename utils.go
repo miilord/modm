@@ -14,16 +14,6 @@ func GetPointer[T any](value T) *T {
 	return &value
 }
 
-// StructToBSOND converts structure variables to bson.D.
-func StructToBSOND(v interface{}) (doc bson.D, err error) {
-	data, err := bson.Marshal(v)
-	if err != nil {
-		return
-	}
-	err = bson.Unmarshal(data, &doc)
-	return
-}
-
 // Generate index models from unique and compound index definitions.
 // If uniques/indexes is []string{"name"}, means create index "name"
 // If uniques/indexes is []string{"name,-age","uid"}, means create compound indexes: name and -age, then create one index: uid
