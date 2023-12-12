@@ -15,7 +15,7 @@ func TestDefaultFieldHooks(t *testing.T) {
 	// Test the BeforeInsert hook
 	ctx := context.TODO()
 	df.BeforeInsert(ctx)
-	if df.Id.IsZero() {
+	if df.ID.IsZero() {
 		t.Fatalf("BeforeInsert did not set a default ID")
 	}
 	if df.CreatedAt.IsZero() {

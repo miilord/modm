@@ -9,33 +9,33 @@ import (
 
 // DefaultField represents a structure with default fields for MongoDB documents.
 type DefaultField struct {
-	Id        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	CreatedAt time.Time          `bson:"created_at,omitempty" json:"createdAt"`
-	UpdatedAt time.Time          `bson:"updated_at,omitempty" json:"updatedAt"`
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"_id"`
+	CreatedAt time.Time          `bson:"created_at,omitempty" json:"created_at"`
+	UpdatedAt time.Time          `bson:"updated_at,omitempty" json:"updated_at"`
 }
 
-// DefaultUpdatedAt sets the default value for the updatedAt field.
+// DefaultUpdatedAt sets the default value for the UpdatedAt field.
 func (df *DefaultField) DefaultUpdatedAt() {
 	df.UpdatedAt = time.Now()
 }
 
-// DefaultCreatedAt sets the default value for the createdAt field if it's zero.
+// DefaultCreatedAt sets the default value for the CreatedAt field if it's zero.
 func (df *DefaultField) DefaultCreatedAt() {
 	if df.CreatedAt.IsZero() {
 		df.CreatedAt = time.Now()
 	}
 }
 
-// DefaultId sets the default value for the _id field if it's zero.
-func (df *DefaultField) DefaultId() {
-	if df.Id.IsZero() {
-		df.Id = primitive.NewObjectID()
+// DefaultID sets the default value for the _id field if it's zero.
+func (df *DefaultField) DefaultID() {
+	if df.ID.IsZero() {
+		df.ID = primitive.NewObjectID()
 	}
 }
 
 // BeforeInsert is a hook to set default field values before inserting a document.
 func (df *DefaultField) BeforeInsert(ctx context.Context) {
-	df.DefaultId()
+	df.DefaultID()
 	df.DefaultCreatedAt()
 	df.DefaultUpdatedAt()
 }

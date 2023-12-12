@@ -120,7 +120,7 @@ func TestRepo_UpdateByID(t *testing.T) {
 	require.NoError(t, err)
 
 	// Call the UpdateByID function
-	id := result.Id
+	id := result.ID
 	update := &TestUser{Age: 3}
 	modifiedCount, err := repo.UpdateByID(ctx, id, update)
 	require.NoError(t, err)
@@ -345,7 +345,7 @@ func TestRepo_Get(t *testing.T) {
 	require.NotNil(t, user.UpdatedAt)
 
 	// Call the FindOne function
-	doc, err := repo.Get(ctx, user.Id)
+	doc, err := repo.Get(ctx, user.ID)
 	require.NoError(t, err)
 
 	// Validate that one document was retrieved
