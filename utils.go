@@ -21,7 +21,7 @@ func GetPointer[T any](value T) *T {
 // Example:
 //
 //	_, err := db.Mongo.Account.FindOne(context.TODO(), filter)
-//	exists, err := IsDocumentExists(err)
+//	exists, err := modm.IsDocumentExists(err)
 //	if err != nil {
 //	    return err
 //	}
