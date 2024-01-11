@@ -1,6 +1,7 @@
 package modm
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,6 +16,36 @@ func TestGetPointer(t *testing.T) {
 	ptr := GetPointer(value)
 	assert.NotNil(t, ptr)
 	assert.Equal(t, value, *ptr)
+}
+
+func TestIsDocumentExists(t *testing.T) {
+	// Case 1: Error is nil
+	exists, err := IsDocumentExists(nil)
+	if err != nil {
+		t.Errorf("Expected nil error, got %v", err)
+	}
+	if !exists {
+		t.Error("Expected true, got false")
+	}
+
+	// Case 2: Error is mongo.ErrNoDocuments
+	exists, err = IsDocumentExists(mongo.ErrNoDocuments)
+	if err != nil {
+		t.Errorf("Expected nil error, got %v", err)
+	}
+	if exists {
+		t.Error("Expected false, got true")
+	}
+
+	// Case 3: Other error
+	otherError := errors.New("some other error")
+	exists, err = IsDocumentExists(otherError)
+	if err != otherError {
+		t.Errorf("Expected %v error, got %v", otherError, err)
+	}
+	if exists {
+		t.Error("Expected false, got true")
+	}
 }
 
 func TestIndexesToModel(t *testing.T) {

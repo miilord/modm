@@ -14,6 +14,34 @@ func GetPointer[T any](value T) *T {
 	return &value
 }
 
+// IsDocumentExists checks if a MongoDB FindOne/Find operation returned an error indicating
+// the absence of documents. It returns true if documents are found, false if
+// no documents are found, and any other error encountered during the operation.
+// The function is designed to be used in conjunction with MongoDB FindOne/Find queries.
+// Example:
+//
+//	_, err := db.Mongo.Account.FindOne(context.TODO(), filter)
+//	exists, err := IsDocumentExists(err)
+//	if err != nil {
+//	    return err
+//	}
+//	if !exists {
+//	    return fmt.Errorf("Document not found")
+//	}
+func IsDocumentExists(err error) (bool, error) {
+	// if err == mongo.ErrNoDocuments {
+	// 	err = nil
+	// }
+	// return err == nil, err
+	if err == nil {
+		return true, nil
+	}
+	if err == mongo.ErrNoDocuments {
+		return false, nil
+	}
+	return false, err
+}
+
 // Generate index models from unique and compound index definitions.
 // If uniques/indexes is []string{"name"}, means create index "name"
 // If uniques/indexes is []string{"name,-age","uid"}, means create compound indexes: name and -age, then create one index: uid
