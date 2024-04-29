@@ -34,11 +34,7 @@ type User struct {
 	Name         string `bson:"name,omitempty" json:"name"`
 	Age          int    `bson:"age,omitempty" json:"age"`
 }
-```
 
-Subsequently, the query is executed using mongo-go-driver:
-
-```go
 coll := db.Collection("users")
 users := make([]*User, 0)
 cursor, err := coll.Find(context.TODO(), bson.D{})
@@ -53,6 +49,12 @@ if err = cursor.All(context.TODO(), &users); err != nil {
 In contrast, using modm can greatly simplify the process:
 
 ```go
+type User struct {
+	DefaultField `bson:",inline"`
+	Name         string `bson:"name,omitempty" json:"name"`
+	Age          int    `bson:"age,omitempty" json:"age"`
+}
+
 coll := NewRepo[*User](db.Collection("users"))
 users, err := coll.Find(context.TODO(), bson.D{})
 if err != nil {
