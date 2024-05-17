@@ -39,7 +39,7 @@ type IRepo[T Document] interface {
 	DeleteMany(ctx context.Context, filter interface{}, opts ...*options.DeleteOptions) (deletedCount int64, err error)
 	DeleteOne(ctx context.Context, filter interface{}, opts ...*options.DeleteOptions) (deletedCount int64, err error)
 	Distinct(ctx context.Context, fieldName string, filter interface{}, opts ...*options.DistinctOptions) ([]interface{}, error)
-	EnsureIndexes(ctx context.Context, uniques []string, indexes []string) error
+	EnsureIndexes(ctx context.Context, uniques []string, indexes []string, indexModels ...mongo.IndexModel) error
 	EnsureIndexesByModel(ctx context.Context, model Indexes) error
 	EstimatedCount(ctx context.Context, opts ...*options.EstimatedDocumentCountOptions) (int64, error)
 	EstimatedDocumentCount(ctx context.Context, opts ...*options.EstimatedDocumentCountOptions) (int64, error)

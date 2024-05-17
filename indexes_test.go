@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type testIndex struct {
@@ -48,10 +49,33 @@ func TestRepo_EnsureIndexes(t *testing.T) {
 	// Define unique and non-unique indexes for testing
 	uniques := []string{"name"}
 	indexes := []string{"name,-age", "-name", "age,-name"}
+	indexModel := mongo.IndexModel{
+		Keys: bson.D{{"foo", "text"}},
+		Options: options.Index().
+			SetExpireAfterSeconds(10).
+			SetName("a").
+			SetSparse(false).
+			SetUnique(false).
+			SetVersion(1).
+			SetDefaultLanguage("english").
+			SetLanguageOverride("english").
+			SetTextVersion(1).
+			SetWeights(bson.D{}).
+			SetSphereVersion(1).
+			SetBits(2).
+			SetMax(10).
+			SetMin(1).
+			SetPartialFilterExpression(bson.D{}).
+			SetStorageEngine(bson.D{
+				{"wiredTiger", bson.D{
+					{"configString", "block_compressor=zlib"},
+				}},
+			}),
+	}
 
 	// Call the EnsureIndexes function
 	ctx := context.TODO()
-	err := repo.EnsureIndexes(ctx, uniques, indexes)
+	err := repo.EnsureIndexes(ctx, uniques, indexes, indexModel)
 	require.NoError(t, err)
 
 	// Validate that indexes were created
@@ -87,6 +111,21 @@ func (u *TestUser) Indexes() []string {
 	return []string{"name,-age", "-name", "age,-name"}
 }
 
+func (u *TestUser) IndexModels() []mongo.IndexModel {
+	return []mongo.IndexModel{
+		{
+			Keys: bson.D{
+				{Key: "area_code", Value: int32(1)},
+				{Key: "phone_number", Value: int32(1)},
+			},
+			Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.D{
+				{Key: "area_code", Value: bson.D{{Key: "$exists", Value: true}}},
+				{Key: "phone_number", Value: bson.D{{Key: "$exists", Value: true}}},
+			}),
+		},
+	}
+}
+
 func TestRepo_EnsureIndexesByModel(t *testing.T) {
 	// Create a test Repo instance
 	db, cleanup := setupTestDatabase(t)
@@ -102,8 +141,11 @@ func TestRepo_EnsureIndexesByModel(t *testing.T) {
 	// Validate that indexes were created
 	indexView := repo.collection.Indexes()
 
+	indexModexs := IndexesToModel(testUserModel.Uniques(), testUserModel.Indexes())
+	indexModexs = append(indexModexs, testUserModel.IndexModels()...)
+
 	// Validate unique indexes
-	for _, item := range IndexesToModel(testUserModel.Uniques(), testUserModel.Indexes()) {
+	for _, item := range indexModexs {
 		key := item.Keys.(bson.D)
 		name := ""
 		for i, kv := range key {

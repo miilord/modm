@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // DefaultField represents a structure with default fields for MongoDB documents.
@@ -62,4 +63,9 @@ func (df *DefaultField) Uniques() []string {
 // Indexes returns the non-unique indexes for the collection.
 func (df *DefaultField) Indexes() []string {
 	return []string{}
+}
+
+// Indexes returns the non-unique indexes for the collection.
+func (df *DefaultField) IndexModels() []mongo.IndexModel {
+	return []mongo.IndexModel{}
 }
