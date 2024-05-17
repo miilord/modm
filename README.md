@@ -28,18 +28,18 @@ MODM is a MongoDB wrapper built on top of the mongo-go-driver, leveraging the po
 
 When using mongodb, the typical approach is to define models and collections as follows:
 
+### With mongo-go-driver
+
 ```go
 type User struct {
 	DefaultField `bson:",inline"`
 	Name         string `bson:"name,omitempty" json:"name"`
 	Age          int    `bson:"age,omitempty" json:"age"`
 }
-```
 
-Subsequently, the query is executed using mongo-go-driver:
-
-```go
 coll := db.Collection("users")
+
+// When using find(), it's necessary to predefine the return structure and manually iterate through the cursor
 users := make([]*User, 0)
 cursor, err := coll.Find(context.TODO(), bson.D{})
 if err != nil {
@@ -50,10 +50,20 @@ if err = cursor.All(context.TODO(), &users); err != nil {
 }
 ```
 
-In contrast, using modm can greatly simplify the process:
+### With modm
+
+On the other hand, modm offers a simpler approach:
 
 ```go
-coll := NewRepo[*User](db.Collection("users"))
+type User struct {
+	DefaultField `bson:",inline"`
+	Name         string `bson:"name,omitempty" json:"name"`
+	Age          int    `bson:"age,omitempty" json:"age"`
+}
+
+coll := modm.NewRepo[*User](db.Collection("users"))
+
+// No need to predefine the return structure, and the cursor management is automatic
 users, err := coll.Find(context.TODO(), bson.D{})
 if err != nil {
 	log.Fatal(err)
