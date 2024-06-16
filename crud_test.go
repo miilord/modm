@@ -24,6 +24,7 @@ func TestRepo_InsertOne(t *testing.T) {
 	var doc TestUser
 	err = db.Collection(testColl).FindOne(ctx, bson.M{"age": 6}).Decode(&doc)
 	require.NoError(t, err)
+	require.NotNil(t, doc.ID)
 	require.NotNil(t, doc.CreatedAt)
 	require.NotNil(t, doc.UpdatedAt)
 }

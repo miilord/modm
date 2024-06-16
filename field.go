@@ -15,6 +15,10 @@ type DefaultField struct {
 	UpdatedAt time.Time          `bson:"updated_at,omitempty" json:"updated_at"`
 }
 
+func (df *DefaultField) SetID(id primitive.ObjectID) {
+	df.ID = id
+}
+
 // DefaultUpdatedAt sets the default value for the UpdatedAt field.
 func (df *DefaultField) DefaultUpdatedAt() {
 	df.UpdatedAt = time.Now()

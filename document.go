@@ -3,12 +3,14 @@ package modm
 import (
 	"context"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // Document represents an interface for common document operations.
 type Document interface {
+	SetID(id primitive.ObjectID)
 	BeforeInsert(ctx context.Context)
 	AfterInsert(ctx context.Context)
 	BeforeUpdate(ctx context.Context)

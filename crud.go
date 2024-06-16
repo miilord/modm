@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -12,9 +13,12 @@ import (
 func (r *Repo[T]) InsertOne(ctx context.Context, doc T, opts ...*options.InsertOneOptions) (T, error) {
 	doc.BeforeInsert(ctx)
 	defer doc.AfterInsert(ctx)
-	_, err := r.collection.InsertOne(ctx, doc, opts...)
+	res, err := r.collection.InsertOne(ctx, doc, opts...)
 	if err != nil {
 		return *new(T), err
+	}
+	if id, ok := res.InsertedID.(primitive.ObjectID); ok {
+		doc.SetID(id)
 	}
 	return doc, nil
 }
